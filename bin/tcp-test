@@ -1,0 +1,28 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require_relative '../lib/tcp_adapter'
+
+class TcpTestRunner
+  class << self
+    def exec
+      mode = ARGV[0]
+      port = ARGV[1].to_i || 12345
+      adapter = TCPAdapter.new
+      if mode == 'server'
+        adapter.start_server(port)
+        adapter.receive
+        adapter.close
+      elsif mode == 'client'
+        server_ip = ARGV[2]
+        adapter.start_client(server_ip, port)
+        adapter.send_data("Hello, サーバー!")
+        adapter.close
+      else
+        puts "Invalid mode. Use 'server' or 'client'."
+      end
+    end
+  end
+end
+
+TcpTestRunner.exec if __FILE__ == $PROGRAM_NAME
