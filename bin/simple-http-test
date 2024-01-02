@@ -1,0 +1,25 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require_relative '../lib/simple_http_server'
+require_relative '../lib/simple_http_client'
+
+class SimpleHttpTestRunner
+  def self.execute(type:, port:, domain:, path:)
+    case type
+    when 'server'
+      SimpleHttpServer.new(port).start
+    when 'client'
+      client = SimpleHttpClient.new("#{domain}:#{port}/#{path}")
+      puts client.send_request
+    else
+      raise "Unknown type: #{type}"
+    end
+  end
+end
+
+type = ARGV[0]
+port = ARGV[1].to_i
+domain = ARGV[2] || 'http://localhost'
+path = ARGV[3]
+SimpleHttpTestRunner.execute(type: type, port: port, domain: domain, path: path)
